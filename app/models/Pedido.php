@@ -15,7 +15,7 @@ class Pedido
   {
     $objAccesoDatos = AccesoDatos::obtenerInstancia();
     $consulta = $objAccesoDatos->prepararConsulta(
-      "INSERT INTO pedidos (numero_pedido, estado, cliente, numero_mesa, tiempo, hora, fecha) 
+    "INSERT INTO pedidos (numero_pedido, estado, cliente, numero_mesa, tiempo, hora, fecha) 
       VALUES (:numero_pedido, :estado, :cliente, :numero_mesa, :tiempo, :hora, :fecha)");
     date_default_timezone_set('America/Argentina/Buenos_Aires');
     $fecha = new DateTime();
@@ -363,7 +363,7 @@ class Pedido
     $objAccesoDatos = AccesoDatos::obtenerInstancia();
     $consulta = $objAccesoDatos->prepararConsulta(
       "SELECT tiempo, hora FROM pedidos
-            WHERE numero_pedido = :numero_edido"
+       WHERE numero_pedido = :numero_edido"
     );
     $consulta->bindValue(':numero_pedido', $numero, PDO::PARAM_STR);
     $consulta->execute();

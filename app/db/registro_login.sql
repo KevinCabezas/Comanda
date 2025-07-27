@@ -1,0 +1,7 @@
+CREATE TABLE registro_logins (
+  id INT(11) AUTO_INCREMENT PRIMARY KEY,
+  usuario INT(11) NOT NULL,
+  fecha DATE NOT NULL DEFAULT,
+  hora TIME NOT NULL DEFAULT,
+  FOREIGN KEY (usuario) REFERENCES usuarios(id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

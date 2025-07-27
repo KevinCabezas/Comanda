@@ -11,3 +11,4 @@ CREATE TABLE pedidos (
     PRIMARY KEY (id),
     FOREIGN KEY (numero_mesa) REFERENCES mesas(numero) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+

@@ -16,5 +16,7 @@ return function (App $app) {
     // $group->delete('/{usuarioId:[0-9]+}', \UsuarioController::class . ':BorrarUno');
     $group->post('/login', \UsuarioController::class . ':Login')
     ->add(\UsuarioMW::class . ":verificarUsuario");
+
+    $group->get('/registros', \UsuarioController::class . ':obtnerUnRegistroLogin');
   });
 };

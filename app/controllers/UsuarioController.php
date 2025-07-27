@@ -107,10 +107,25 @@ class UsuarioController extends Usuario implements IApiUsable
 
       // $payload = json_encode(array("mensaje" => "Bienvenido"));
       $datos = Usuario::verificarUsuario($usuario, $clave);
-
+      $id = Usuario::obtnerId($usuario, $clave);
+      Usuario::registroLogin($id);
       $token = AutentificadorJWT::CrearToken($datos);
       
       $response->getBody()->write(json_encode(['token' => $token]));
       return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function obtnerUnRegistroLogin($request, $response, $args)
+    {
+        $queryParams = $request->getQueryParams();
+        $nombre = $queryParams['nombre'] ?? null;
+        $apellido = $queryParams['apellido'] ?? null;
+
+        $registroUsuario = Usuario::obtenerRegistro($nombre, $apellido);
+        
+        $payload = json_encode($registroUsuario);
+        $response->getBody()->write($payload);
+        return $response
+          ->withHeader('Content-Type', 'application/json');
     }
 }
