@@ -142,6 +142,8 @@ class Usuario
     return $consulta->fetchColumn();
   }
 
+
+  // Corrección n° 20
   public static function obtenerRegistro($nombre, $apellido)
   {
     $objAccesoDatos = AccesoDatos::obtenerInstancia();

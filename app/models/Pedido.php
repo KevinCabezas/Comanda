@@ -15,8 +15,9 @@ class Pedido
   {
     $objAccesoDatos = AccesoDatos::obtenerInstancia();
     $consulta = $objAccesoDatos->prepararConsulta(
-    "INSERT INTO pedidos (numero_pedido, estado, cliente, numero_mesa, tiempo, hora, fecha) 
-      VALUES (:numero_pedido, :estado, :cliente, :numero_mesa, :tiempo, :hora, :fecha)");
+      "INSERT INTO pedidos (numero_pedido, estado, cliente, numero_mesa, tiempo, hora, fecha) 
+      VALUES (:numero_pedido, :estado, :cliente, :numero_mesa, :tiempo, :hora, :fecha)"
+    );
     date_default_timezone_set('America/Argentina/Buenos_Aires');
     $fecha = new DateTime();
 
@@ -36,7 +37,8 @@ class Pedido
     $objAccesoDatos = AccesoDatos::obtenerInstancia();
     $consulta = $objAccesoDatos->prepararConsulta(
       "INSERT INTO detalles_pedidos (numero_pedido, cantidad, codigo_producto, tiempo_demora, estado, hora) 
-      VALUES (:numero_pedido, :cantidad, :codigo_producto, :tiempo_demora, :estado, :hora)");
+      VALUES (:numero_pedido, :cantidad, :codigo_producto, :tiempo_demora, :estado, :hora)"
+    );
 
     date_default_timezone_set('America/Argentina/Buenos_Aires');
     $fecha = new DateTime();
@@ -92,7 +94,8 @@ class Pedido
     $consulta = $objAccesoDato->prepararConsulta(
       "UPDATE pedidos 
       SET numeroMesa = :numeroMesa, estado = :estado, codigoProducto = :codigoProducto, cantidad = :cantidad 
-      WHERE numeroPedido = :numeroPedido");
+      WHERE numeroPedido = :numeroPedido"
+    );
     $consulta->bindValue(':numeroPedido', $pedido->numeroPedido, PDO::PARAM_INT);
     $consulta->bindValue(':numeroMesa', $pedido->numeroMesa, PDO::PARAM_STR);
     $consulta->bindValue(':codigoProducto', $pedido->codigoProducto, PDO::PARAM_STR);
@@ -154,7 +157,8 @@ class Pedido
   {
     $objAccesoDato = AccesoDatos::obtenerInstancia();
     $consulta = $objAccesoDato->prepararConsulta(
-      "UPDATE pedidos SET estado = :estado WHERE numero_pedido = :pedido AND numero_mesa = :mesa");
+      "UPDATE pedidos SET estado = :estado WHERE numero_pedido = :pedido AND numero_mesa = :mesa"
+    );
     $consulta->bindValue(':pedido', $pedido, PDO::PARAM_STR);
     $consulta->bindValue(':mesa', $mesa, PDO::PARAM_INT);
     $consulta->bindValue(':estado', $estado, PDO::PARAM_STR);
@@ -385,4 +389,6 @@ class Pedido
 
     self::modificarPedidoEstadoPricipal($numero, "preparacion", $estado);
   }
+
+  
 }
