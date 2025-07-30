@@ -33,7 +33,9 @@ class Producto
   public static function verificarCodigoProducto()
   {
     $objAccesoDatos = AccesoDatos::obtenerInstancia();
-    $consulta = $objAccesoDatos->prepararConsulta("SELECT codigo FROM productos");
+    $consulta = $objAccesoDatos->prepararConsulta(
+      "SELECT codigo FROM productos"
+    );
     $consulta->execute();
 
     //retorna como un objeto generico
@@ -105,6 +107,45 @@ class Producto
     }
     return false;
   }
+
+  public static function verificarProductoDos($nombre, $codigo)
+  {
+    $objAccesoDatos = AccesoDatos::obtenerInstancia();
+    $consulta = $objAccesoDatos->prepararConsulta(
+      "SELECT * 
+      FROM productos 
+      WHERE nombre = :nombre  OR codigo = :codigo"
+    );
+
+    $consulta->bindValue(':nombre', $nombre, PDO::PARAM_STR);
+    $consulta->bindValue(':codigo', $codigo, PDO::PARAM_INT);
+    $consulta->execute();
+
+    if ($consulta->rowCount() > 0) {
+      return true;
+    }
+    return false;
+  }
+
+
+  public static function verificarProductoTipo($tipo)
+  {
+    $objAccesoDatos = AccesoDatos::obtenerInstancia();
+    $consulta = $objAccesoDatos->prepararConsulta(
+      "SELECT * 
+      FROM tipo_productos 
+      WHERE nombre = :tipo"
+    );
+
+    $consulta->bindValue(':tipo', $tipo, PDO::PARAM_STR);
+    $consulta->execute();
+
+    if ($consulta->rowCount() > 0) {
+      return true;
+    }
+    return false;
+  }
+
 
   public static function verificarProductoPuesto($producto, $puesto)
   {

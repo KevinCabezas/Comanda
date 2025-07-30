@@ -16,6 +16,7 @@ require_once '../db/AccesoDatos.php';
 // require_once '../db/archivos.php';
 require_once '../Middlewares/ConfirmarPerfil.php';
 require_once '../Middlewares/UsuarioMiddleware.php';
+require_once '../Middlewares/ProductoMiddleware.php';
 require_once '../Middlewares/VericacionesMiddleware.php';
 
 require_once '../controllers/UsuarioController.php';

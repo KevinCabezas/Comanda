@@ -1,6 +1,7 @@
 <?php
 require_once '../models/Producto.php';
 require_once '../interfaces/IApiUsable.php';
+require_once '../Middlewares/ProductoMiddleware.php';
 
 class ProductoController extends Producto implements IApiUsable
 {
@@ -12,7 +13,7 @@ class ProductoController extends Producto implements IApiUsable
     $nombre = $parametros['nombre'];
     $tipo = $parametros['tipo'];
     $stock = $parametros['stock'];
-    $precio = $parametros['precio'] ?? null;
+    $precio = $parametros['precio'];
 
 
     $producto = new Producto();
@@ -43,10 +44,10 @@ class ProductoController extends Producto implements IApiUsable
 
   public static function cargarVariosProductos($codigo, $nombre, $tipo, $stock, $precio)
   {
-
     $producto = new Producto();
+    $producto->codigo = $codigo;
     $producto->nombre = $nombre;
-    $producto->tipo = $tipo;
+    $producto->tipo =  Producto::obtenerTipoProducto($tipo);
     $producto->stock = $stock;
     $producto->precio = $precio;
 
@@ -58,10 +59,50 @@ class ProductoController extends Producto implements IApiUsable
       $producto->crearProducto();
       $payload = json_encode(array("mensaje" => "Producto agregado con exito"));
     }
-
-
     return $payload;
   }
+
+
+
+  public function cargarCsv($request, $response, $args)
+  {
+    $archivo = $request->getUploadedFiles();
+    $csv = $archivo['csv'];
+    $rutaTemporal = $csv->getStream()->getMetadata('uri');
+
+    $mensajes = [];
+
+    if (($archivo = fopen($rutaTemporal, "r")) !== false) {
+      $primeraLinea = true;
+
+      while (($datos = fgetcsv($archivo, 1000, ",")) !== false) {
+        if ($primeraLinea) {
+          $primeraLinea = false;
+          continue;
+        }
+
+        [$codigo, $nombre, $tipo, $stock, $precio] = $datos;
+
+        // Validar antes de insertar
+        $validacion = ProductoMW::validarProductoCsv($codigo, $nombre, $tipo);
+
+        if ($validacion === true) {
+          $payload = self::cargarVariosProductos($codigo, $nombre, $tipo, $stock, $precio);
+          $mensajes[] = json_decode($payload, true)['mensaje'];
+        } else {
+          $mensajes[] = $validacion;
+        }
+      }
+
+      fclose($archivo);
+    } else {
+      $mensajes[] = 'Error al abrir el archivo.';
+    }
+
+    $response->getBody()->write(json_encode(["resultados" => $mensajes]));
+    return $response->withHeader('Content-Type', 'application/json');
+  }
+
 
   public function TraerUno($request, $response, $args)
   {
@@ -83,12 +124,7 @@ class ProductoController extends Producto implements IApiUsable
     return $response->withHeader('Content-Type', 'application/json');
   }
 
-  public function ModificarUno($request, $response, $args) 
-  {
-    
-  }
+  public function ModificarUno($request, $response, $args) {}
 
   public function BorrarUno($request, $response, $args) {}
-
-
 }

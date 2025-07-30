@@ -319,25 +319,5 @@ class PedidoController extends Pedido
   }
 
 
-  public function cargarCsv($request, $response, $args)
-  {
-    $archivo = $request->getUploadedFiles();
-
-    $csv = $archivo['csv'];
-
-    $rutaTemporal = $csv->getStream()->getMetadata('uri');
-
-    if (($archivo = fopen($rutaTemporal, "r")) !== false) {
-      while (($datos = fgetcsv($archivo, 1000, ";")) !== false) {
-        $payload = ProductoController::cargarVariosProductos($datos[0], $datos[1], $datos[2], $datos[3], $datos[4]);
-      }
-      fclose($archivo);
-    } else {
-      $payload = json_encode(array("Mensaje" => 'error archivo'));
-    }
-
-    $response->getBody()->write($payload);
-    return $response->withHeader('Content-Type', 'application/json');
-  }
   // https://github.com/KevinCabezas/tp-slim-progra3.git
 }
