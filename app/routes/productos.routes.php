@@ -10,12 +10,15 @@ return function (App $app) {
 
     $group->post('/crear', \ProductoController::class . ':CargarUno')
     ->add(\ProductoMW::class . ":codigoProductoMW")
-    ->add(\ProductoMW::class . ":codigoProductoMW")
     ->add(\ProductoMW::class . ":verificarProductoDataMW");
 
     $group->post('/cargar-productos', \ProductoController::class . ':cargarCsv');
     // ->add(new ConfirmarPerfil([1]));
 
-    $group->get('/{producto}', \ProductoController::class . ':TraerUno');
+    $group->put('/{productoId}', \ProductoController::class . ':ModificarUno')
+    ->add(\ProductoMW::class . ":verificarProductoDataMW");
+    
+    $group->get('/{productoId}', \ProductoController::class . ':TraerUno');
+    $group->delete('/{productoId}', \ProductoController::class . ':BorrarUno');
   });
 };
