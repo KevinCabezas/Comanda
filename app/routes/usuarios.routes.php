@@ -10,12 +10,18 @@ return function (App $app) {
     $group->get('/lista', \UsuarioController::class . ':TraerTodos')
     ->add(new ConfirmarPerfil(["socio"]));
 
-    $group->post('/crear', \UsuarioController::class . ':CargarUno');
+    $group->post('/crear', \UsuarioController::class . ':CargarUno')
+    ->add(\UsuarioMW::class . ":verificarUsuarioDataMW");
+
     // $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
-    // $group->put('/{usuarioId:[0-9]+}', \UsuarioController::class . ':ModificarUno');
-    // $group->delete('/{usuarioId:[0-9]+}', \UsuarioController::class . ':BorrarUno');
+
+    $group->put('/modificar/{usuarioId}', \UsuarioController::class . ':ModificarUno')
+    ->add(\UsuarioMW::class . ":verificarUsuarioDataMW");
+
+    $group->delete('/borrar/{usuarioId}', \UsuarioController::class . ':BorrarUno');
+
     $group->post('/login', \UsuarioController::class . ':Login')
-    ->add(\UsuarioMW::class . ":verificarUsuario");
+    ->add(\UsuarioMW::class . ":verificarUsuarioMW");
 
     $group->get('/registros', \UsuarioController::class . ':obtnerUnRegistroLogin');
   });

@@ -66,7 +66,10 @@ class MesaController extends Mesa implements IApiUsable
     return $response->withHeader('Content-Type', 'application/json');
   }
 
-  public function BorrarUno($request, $response, $args) {}
+  public function BorrarUno($request, $response, $args) 
+  {
+    
+  }
 
   public function obtenreListaMesasFacturacion($request, $response, $args) 
   {

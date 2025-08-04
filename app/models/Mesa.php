@@ -11,7 +11,9 @@ class Mesa
   public function crearMesa()
   {
     $objAccesoDatos = AccesoDatos::obtenerInstancia();
-    $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO mesas (numero, estado, codigo, usos) VALUES (:numero, :estado, :codigo, :usos)");
+    $consulta = $objAccesoDatos->prepararConsulta(
+      "INSERT INTO mesas (numero, estado, codigo, usos) 
+      VALUES (:numero, :estado, :codigo, :usos)");
     $codigoUnico = self::generarCodigo(5);
 
     $consulta->bindValue(':numero', $this->numero, PDO::PARAM_STR);
@@ -26,7 +28,8 @@ class Mesa
   public static function obtenerTodos()
   {
     $objAccesoDatos = AccesoDatos::obtenerInstancia();
-    $consulta = $objAccesoDatos->prepararConsulta("SELECT numero, estado FROM mesas");
+    $consulta = $objAccesoDatos->prepararConsulta(
+      "SELECT numero, estado FROM mesas");
     $consulta->execute();
 
     return $consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -53,6 +56,19 @@ class Mesa
     $consulta->bindValue(':numero', $mesa->numero, PDO::PARAM_STR);
     $consulta->bindValue(':estado', $mesa->estado, PDO::PARAM_STR);
     $consulta->bindValue(':usos', $mesa->usos, PDO::PARAM_INT);
+    $consulta->execute();
+  }
+
+  public static function borrarUsuario($usuario)
+  {
+    $objAccesoDato = AccesoDatos::obtenerInstancia();
+    $consulta = $objAccesoDato->prepararConsulta(
+      "UPDATE mesas 
+      SET fecha_baja = :fecha_baja 
+      WHERE id = :id");
+    $fecha = new DateTime(date("d-m-Y"));
+    $consulta->bindValue(':id', $usuario, PDO::PARAM_INT);
+    $consulta->bindValue(':fecha_baja', date_format($fecha, 'Y-m-d'));
     $consulta->execute();
   }
 

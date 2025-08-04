@@ -87,9 +87,6 @@ class UsuarioController extends Usuario implements IApiUsable
 
     public function BorrarUno($request, $response, $args)
     {
-        $parametros = $request->getParsedBody();
-        
-        // $usuarioId = $parametros['usuarioId'];
         $usuarioId = $args['usuarioId'];
         Usuario::borrarUsuario($usuarioId);
 

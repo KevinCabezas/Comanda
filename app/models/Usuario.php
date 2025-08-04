@@ -32,7 +32,8 @@ class Usuario
   public static function obtnerPuestoId($nombrePuesto)
   {
     $objAccesoDatos = AccesoDatos::obtenerInstancia();
-    $consulta = $objAccesoDatos->prepararConsulta("SELECT id FROM tipo_usuario WHERE puesto = :puesto");
+    $consulta = $objAccesoDatos->prepararConsulta(
+      "SELECT id FROM tipo_usuario WHERE puesto = :puesto");
     $consulta->bindValue(':puesto', $nombrePuesto, PDO::PARAM_STR);
     $consulta->execute();
     return $consulta->fetchColumn();
@@ -41,7 +42,8 @@ class Usuario
   public static function traerTipoUsuario()
   {
     $objAccesoDatos = AccesoDatos::obtenerInstancia();
-    $consulta = $objAccesoDatos->prepararConsulta("SELECT id, puesto FROM tipo_usuario");
+    $consulta = $objAccesoDatos->prepararConsulta(
+      "SELECT id, puesto FROM tipo_usuario");
     $consulta->execute();
 
     return $consulta->fetchAll(PDO::FETCH_OBJ);
@@ -51,7 +53,9 @@ class Usuario
   {
     $objAccesoDatos = AccesoDatos::obtenerInstancia();
     $consulta = $objAccesoDatos->prepararConsulta(
-      "SELECT id, puesto, nombre, apellido, clave, fecha_ingreso, fecha_baja FROM usuarios"
+      "SELECT id, puesto, nombre, apellido, clave, fecha_ingreso, fecha_baja 
+      FROM usuarios
+      WHERE fecha_baja IS NULL"
     );
     $consulta->execute();
 
@@ -63,7 +67,9 @@ class Usuario
   {
     $objAccesoDatos = AccesoDatos::obtenerInstancia();
     $consulta = $objAccesoDatos->prepararConsulta(
-      "SELECT id, puesto, nombre, apellido, clave, fecha_ingreso, fecha_baja FROM usuarios WHERE id = :id"
+      "SELECT id, puesto, nombre, apellido, clave, fecha_ingreso, fecha_baja 
+      FROM usuarios 
+      WHERE id = :id"
     );
     $consulta->bindValue(':id', $usuario, PDO::PARAM_INT);
     $consulta->execute();
@@ -75,7 +81,9 @@ class Usuario
   {
     $objAccesoDato = AccesoDatos::obtenerInstancia();
     $consulta = $objAccesoDato->prepararConsulta(
-      "UPDATE usuarios SET puesto = :puesto, nombre = :nombre, apellido = :apellido, clave = :clave WHERE id = :id"
+      "UPDATE usuarios 
+      SET puesto = :puesto, nombre = :nombre, apellido = :apellido, clave = :clave 
+      WHERE id = :id"
     );
     // $consulta = $objAccesoDato->prepararConsulta("UPDATE usuarios SET puesto = :puesto WHERE id = :id");
     $consulta->bindValue(':id', $user->id, PDO::PARAM_INT);
@@ -89,7 +97,10 @@ class Usuario
   public static function borrarUsuario($usuario)
   {
     $objAccesoDato = AccesoDatos::obtenerInstancia();
-    $consulta = $objAccesoDato->prepararConsulta("UPDATE usuarios SET fecha_baja = :fecha_baja WHERE id = :id");
+    $consulta = $objAccesoDato->prepararConsulta(
+      "UPDATE usuarios 
+      SET fecha_baja = :fecha_baja 
+      WHERE id = :id");
     $fecha = new DateTime(date("d-m-Y"));
     $consulta->bindValue(':id', $usuario, PDO::PARAM_INT);
     $consulta->bindValue(':fecha_baja', date_format($fecha, 'Y-m-d'));

@@ -79,9 +79,6 @@ class ProductoMW
     return self::reponseError("Error: el nombre y/o código ya existen en productos diferentes");
   }
 
-
-
-
   public static function validarProductoCsv($codigo, $nombre, $tipo)
   {
     // Validaciones
