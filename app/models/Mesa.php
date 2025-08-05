@@ -52,14 +52,19 @@ class Mesa
   public static function modificarMesa($mesa)
   {
     $objAccesoDato = AccesoDatos::obtenerInstancia();
-    $consulta = $objAccesoDato->prepararConsulta("UPDATE mesas SET estado = :estado, usos = usos + :usos WHERE numero = :numero");
+    $consulta = $objAccesoDato->prepararConsulta(
+      "UPDATE mesas 
+      SET estado = :estado, numero = :numero, usos = usos + :usos 
+      WHERE id = :id");
+      
+    $consulta->bindValue(':id', $mesa->id, PDO::PARAM_INT);
     $consulta->bindValue(':numero', $mesa->numero, PDO::PARAM_STR);
     $consulta->bindValue(':estado', $mesa->estado, PDO::PARAM_STR);
     $consulta->bindValue(':usos', $mesa->usos, PDO::PARAM_INT);
     $consulta->execute();
   }
 
-  public static function borrarUsuario($usuario)
+  public static function borrarMesa($usuario)
   {
     $objAccesoDato = AccesoDatos::obtenerInstancia();
     $consulta = $objAccesoDato->prepararConsulta(

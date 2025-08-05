@@ -43,12 +43,14 @@ class MesaController extends Mesa implements IApiUsable
   public function ModificarUno($request, $response, $args)
   {
     $parametros = $request->getParsedBody();
-    $numeroMesa = $args['numero'];
-    var_dump($numeroMesa);
+    $id = $args['mesaId'];
+
     $mesa = new Mesa();
-    $mesa->numero = $numeroMesa;
+    $mesa->id = $id;
+    $mesa->numero = $parametros['numero'];
     $mesa->estado = $parametros['estado'];
     Mesa::modificarMesa($mesa);
+    
     $payload = json_encode(array("mensaje" => "Mesa modificada con exito"));
 
     $response->getBody()->write($payload);
@@ -66,12 +68,19 @@ class MesaController extends Mesa implements IApiUsable
     return $response->withHeader('Content-Type', 'application/json');
   }
 
-  public function BorrarUno($request, $response, $args) 
+  public function BorrarUno($request, $response, $args)
   {
-    
+
+    $id = $args['mesaId'];
+    Mesa::borrarMesa($id);
+
+    $payload = json_encode(array("mensaje" => "Mesa borrada con exito"));
+
+    $response->getBody()->write($payload);
+    return $response->withHeader('Content-Type', 'application/json');
   }
 
-  public function obtenreListaMesasFacturacion($request, $response, $args) 
+  public function obtenreListaMesasFacturacion($request, $response, $args)
   {
     $lista = Mesa::listaMesaFacturacion();
     $payload = json_encode(array("lista" => $lista));

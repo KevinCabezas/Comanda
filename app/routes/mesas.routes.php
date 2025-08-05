@@ -14,6 +14,9 @@ return function (App $app) {
     $group->get('/facturacion', \MesaController::class . ':obtenerFacturacionMesaEntreFechas'); // Correccion n° 22
 
     $group->post('/crear', \MesaController::class . ':CargarUno');
-    $group->put('/modificar/{numero:[0-9]+}', \MesaController::class . ':ModificarUno');
+    
+    $group->put('/modificar/{mesaId}', \MesaController::class . ':ModificarUno');
+
+    $group->delete('/borrar/{mesaId}', \MesaController::class . ':BorrarUno');
   });
 };
