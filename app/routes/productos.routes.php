@@ -6,7 +6,8 @@ use Slim\Routing\RouteCollectorProxy;
 
 return function (App $app) {
   $app->group('/productos', function (RouteCollectorProxy $group) {
-    $group->get('/lista', \ProductoController::class . ':TraerTodos');
+    $group->get('/lista', \ProductoController::class . ':TraerTodos')
+    ->add(new ConfirmarPerfil(["socio"]));
 
     $group->post('/crear', \ProductoController::class . ':CargarUno')
     ->add(\ProductoMW::class . ":codigoProductoMW")

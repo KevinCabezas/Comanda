@@ -120,6 +120,7 @@ class Pedido
     return str_pad($nuevoNumero, 4, '0', STR_PAD_LEFT);
   }
 
+  //Corrección n° 3
   public static function traerPedidosPendientes($puesto, $estado)
   {
     $objAccesoDatos = AccesoDatos::obtenerInstancia();
@@ -140,7 +141,7 @@ class Pedido
     return $consulta->fetchAll(PDO::FETCH_OBJ);
   }
 
-  public static function modificarPedidoEstado($pedido, $producto, $estado, $tiempo)
+  public static function modificarPedidoEstado($pedido, $producto, $estado, $tiempo, $puesto)
   {
     $objAccesoDato = AccesoDatos::obtenerInstancia();
     $consulta = $objAccesoDato->prepararConsulta(
@@ -171,7 +172,7 @@ class Pedido
     $consulta = $objAccesoDatos->prepararConsulta(
       "SELECT p.tiempo, p.estado, p.numero_pedido, p.cliente 
         FROM pedidos p 
-        JOIN mesas m ON p.numero_mesa = m.id 
+        JOIN mesas m ON p.numero_mesa = m.numero 
         WHERE p.numero_pedido = :pedido AND m.codigo = :codigo"
     );
 
@@ -367,7 +368,7 @@ class Pedido
     $objAccesoDatos = AccesoDatos::obtenerInstancia();
     $consulta = $objAccesoDatos->prepararConsulta(
       "SELECT tiempo, hora FROM pedidos
-       WHERE numero_pedido = :numero_edido"
+       WHERE numero_pedido = :numero_pedido"
     );
     $consulta->bindValue(':numero_pedido', $numero, PDO::PARAM_STR);
     $consulta->execute();

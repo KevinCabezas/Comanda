@@ -39,7 +39,7 @@ class Mesa
   {
     $objAccesoDatos = AccesoDatos::obtenerInstancia();
     $consulta = $objAccesoDatos->prepararConsulta(
-      "SELECT * FROM mesas 
+      "SELECT numero, estado, codigo FROM mesas 
         WHERE numero = :numero 
         OR codigo = :codigo"
     );

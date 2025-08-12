@@ -8,7 +8,9 @@ return function (App $app) {
 
   $app->group('/archivos', function (RouteCollectorProxy $group) {
 
-    $group->post('/foto', \ArchivoController::class . ':guardarFoto');
+    $group->post('/foto', \ArchivoController::class . ':guardarFoto')
+      ->add(new ConfirmarPerfil(["mozo"]));
+
     // ->add(\ValidarMiddleware::class . ":validarArchivoMW");
   });
 };

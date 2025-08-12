@@ -9,10 +9,10 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use \Slim\Routing\RouteContext;
 
-class ProductoMW
+class PedidoMW
 {
 
-  public function verificarProductoDataMW(Request $request, RequestHandler $handler)
+  public function verificarPedidoDataMW(Request $request, RequestHandler $handler)
   {
     $parametros = $request->getParsedBody();
 
@@ -45,74 +45,6 @@ class ProductoMW
     }
 
     $response = $handler->handle($request);
-    return $response;
-  }
-
-
-  public function codigoProductoMW(Request $request, RequestHandler $handler)
-  {
-    $parametros = $request->getParsedBody();
-    $codigo = $parametros['codigo'];
-    $nombre = $parametros['nombre'];
-    $tipo = $parametros['tipo'];
-
-    // Validaciones de existencia
-    $tipoExiste        = Producto::verificarProductoTipo($tipo); // bool
-    $coincideExacto    = Producto::verificarProducto($nombre, $tipo, $codigo); // bool
-    $nombreCodigoMatch = Producto::verificarProductoDos($nombre, $codigo); // bool
-
-    if (!$tipoExiste) {
-      return self::reponseError('Error: El tipo de producto no existe');
-    }
-
-    if ($coincideExacto) {
-      // Nombre, tipo y código coinciden → permitir sumar stock
-      return $handler->handle($request);
-    }
-
-    if (!$nombreCodigoMatch) {
-      // El nombre y código no coinciden → se permite crear solo si es nuevo (y tipo válido)
-      return $handler->handle($request);
-    }
-
-    // Si el nombre y el código existen pero no coinciden → conflicto
-    return self::reponseError("Error: el nombre y/o código ya existen en productos diferentes");
-  }
-
-  public static function validarProductoCsv($codigo, $nombre, $tipo)
-  {
-    // Validaciones
-    $tipoExiste        = Producto::verificarProductoTipo($tipo);
-    $coincideExacto    = Producto::verificarProducto($nombre, $tipo, $codigo);
-    $nombreCodigoMatch = Producto::verificarProductoDos($nombre, $codigo);
-
-    if (!$tipoExiste) {
-      return "Error: Tipo de producto '$tipo' no existe.";
-    }
-
-    if ($coincideExacto) {
-      return true; // Todo OK, producto existente → se suma stock
-    }
-
-    if (!$nombreCodigoMatch) {
-      return true; // Producto nuevo → se permite crear
-    }
-
-    return "Error: nombre '$nombre' o código '$codigo' ya existen pero no coinciden.";
-  }
-
-  public function mesaLibreMW(Request $request, RequestHandler $handler)
-  {
-    $parametros = $request->getParsedBody();
-    $mesaNumero = $parametros['mesa'];
-    $mesa = Mesa::obtenerMesa($mesaNumero);
-
-    if ($mesa->estado == "libre") {
-      $response = $handler->handle($request);
-    } else {
-      return self::reponseError('Mesa ocupada');
-    }
-
     return $response;
   }
 
@@ -169,23 +101,29 @@ class ProductoMW
     return $response;
   }
 
-  // public function verificarProductoPuestoMW(Request $request, RequestHandler $handler)
-  // {
-  //   $parametros = $request->getParsedBody();
-  //   $producto = $parametros['codigoProducto'];
+  public function verificarProductoPuestoMW(Request $request, RequestHandler $handler)
+  {
+    $parametros = $request->getParsedBody();
+    $producto = $parametros['producto'] ?? null;
 
-  //   $token = PedidoController::obtenerToken($request);
-  //   $datos = AutentificadorJWT::ObtenerData($token);
-  //   $puestoEmpleado = $datos->puesto;
-  //   $codigoOk = Producto::verificarProductoPuesto($producto, $puestoEmpleado);
-  //   if ($codigoOk !== false) {
-  //     $response = $handler->handle($request);
-  //   } else {
-  //     return self::reponseError("Codigo del Producto Inavalido");
-  //   }
+    $token = AutentificadorJWT::obtenerToken($request);
+    $datos = AutentificadorJWT::ObtenerData($token);
+    $puestoEmpleado = $datos->puesto ?? null;
 
-  //   return $response;
-  // }
+    if (!$producto || !$puestoEmpleado) {
+      return self::reponseError("Faltan datos para validar el puesto");
+    }
+    $codigoProducto = Producto::obtnerCodigoproducto($producto);
+    var_dump($codigoProducto);
+    $codigoOk = Producto::verificarProductoPuesto($codigoProducto, $puestoEmpleado);
+
+    if ($codigoOk !== false) {
+      return $handler->handle($request);
+    } else {
+      return self::reponseError("Puesto no autorizado para este producto");
+    }
+  }
+
 
   public function codigoMesaMW(Request $request, RequestHandler $handler)
   {

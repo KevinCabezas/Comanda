@@ -6,6 +6,8 @@ use Slim\Psr7\Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use \Slim\Routing\RouteContext;
+
+
 class VerificarMiddleware
 {
     public function mesaLibreMW(Request $request, RequestHandler $handler)
@@ -91,7 +93,7 @@ class VerificarMiddleware
         $parametros = $request->getParsedBody();
         $producto = $parametros['codigoProducto'];
 
-        $token = PedidoController::obtenerToken($request);
+    $token = AutentificadorJWT::obtenerToken($request);
         $datos = AutentificadorJWT::ObtenerData($token);
         $puestoEmpleado = $datos->puesto;
         $codigoOk = Producto::verificarProductoPuesto($producto, $puestoEmpleado);

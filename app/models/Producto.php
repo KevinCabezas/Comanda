@@ -149,17 +149,19 @@ class Producto
     return false;
   }
 
-
+  //Corrección n°3
   public static function verificarProductoPuesto($producto, $puesto)
   {
     $objAccesoDatos = AccesoDatos::obtenerInstancia();
     $consulta = $objAccesoDatos->prepararConsulta(
-      "SELECT * 
-        FROM productos 
-        WHERE empleado = :puesto AND codigo = :producto"
+      "SELECT 1
+      FROM productos p
+      JOIN tipo_productos tp ON p.tipo = tp.id
+      JOIN tipo_usuario tu ON tp.encargado = tu.id
+      WHERE p.codigo = :codigo AND tu.puesto = :puesto"
     );
 
-    $consulta->bindParam(':producto', $producto, PDO::PARAM_INT);
+    $consulta->bindParam(':codigo', $producto, PDO::PARAM_INT);
     $consulta->bindParam(':puesto', $puesto, PDO::PARAM_STR);
     $consulta->execute();
     return $consulta->fetch(PDO::FETCH_OBJ);

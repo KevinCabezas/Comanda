@@ -75,35 +75,36 @@ class PedidoController extends Pedido
   }
 
   // CONSULTA PEDIDO CLIENTE---------------------------------------
-
-  public function pedidoCliente($request, $response, $args)
+  //Correccion n°4
+  public function consultaPedidoCliente($request, $response, $args)
   {
-    $parametros = $request->getParsedBody();
-    $numeroPedido = $parametros['numeroPedido'];
-    $codigoMesa = $parametros['codigoMesa'];
+    // $parametros = $request->getParsedBody();
+    $parametros = $request->getQueryParams();
+
+    $numeroPedido = $parametros['numero_pedido'];
+    $codigoMesa = $parametros['codigo_mesa'];
     Pedido::actualizarEstadoPedido($numeroPedido);
     Pedido::calcularTiempo($numeroPedido);
 
-    $lista = Pedido::estadoPedidoCliente($codigoMesa, $numeroPedido);
-
-    $payload = json_encode(array("listaPedido" => $lista));
+    $pedido = Pedido::estadoPedidoCliente($codigoMesa, $numeroPedido);
+    $payload = json_encode($pedido);
+    // $response->getBody()->write($payload);
+    // $payload = json_encode(array("listaPedido" => $lista));
     $response->getBody()->write($payload);
     return $response->withHeader('Content-Type', 'application/json');
   }
 
 
   // Consultar Pendientes detalles Empleados---------------------------
-
+  //Correccion n°3
   public function pendientesPedidos($request, $response, $args)
   {
-    // $parametros = $request->getParsedBody();
-    // $estado = $parametros['estado'];
-
     // Obtener parámetro de la URL (Query Param)
     $queryParams = $request->getQueryParams();
     $estado = $queryParams['estado'] ?? null;
 
-    $token = self::obtenerToken($request);
+    // $token = self::obtenerToken($request);
+    $token = AutentificadorJWT::obtenerToken($request);
     $datos = AutentificadorJWT::ObtenerData($token);
     $puestoEmpleado = $datos->puesto;
 
@@ -116,7 +117,7 @@ class PedidoController extends Pedido
   }
 
   // cambiar estado --> empleados------------------------
-
+  //Correccion n°3
   public function actualizarEstadosPedidos($request, $response, $args)
   {
     $parametros = $request->getParsedBody();
@@ -125,8 +126,12 @@ class PedidoController extends Pedido
     $estado = $parametros['estado'];
     $tiempo = $parametros['tiempo'];
 
+    $token = AutentificadorJWT::obtenerToken($request);
+    $datos = AutentificadorJWT::ObtenerData($token);
+    $puestoEmpleado = $datos->puesto;
+
     $codigoProducto = Producto::obtnerCodigoproducto($producto);
-    Pedido::modificarPedidoEstado($numeroPedido, $codigoProducto, $estado, $tiempo);
+    Pedido::modificarPedidoEstado($numeroPedido, $codigoProducto, $estado, $tiempo, $puestoEmpleado);
     Pedido::actualizarEstadoPedido($numeroPedido);
 
     $payload = json_encode(array("mensaje" => "Pedido->$estado"));
@@ -268,24 +273,6 @@ class PedidoController extends Pedido
 
     $response->getBody()->write($payload);
     return $response->withHeader('Content-Type', 'application/json');
-  }
-
-  
-
-  public static function obtenerToken($request)
-  {
-    $authorizationHeader = $request->getHeader('HTTP_AUTHORIZATION');
-
-    $authorizationToken = isset($authorizationHeader[0]) ? $authorizationHeader[0] : null;
-
-    $token = null;
-
-    if ($authorizationToken) {
-      $tokenParts = explode(' ', $authorizationToken);
-      $token = isset($tokenParts[1]) ? $tokenParts[1] : null;
-    }
-
-    return $token;
   }
 
   public function descargarCSV($request, $response, $args)
